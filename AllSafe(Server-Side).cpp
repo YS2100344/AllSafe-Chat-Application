@@ -137,4 +137,16 @@ void handle_signal(int signal) {
     shutdown_server(signal); // Call the shutdown function
 }
 
+string color(int code) {
+    return colors[code % NUM_COLORS];
+}
 
+// Sets client's name
+
+void set_name(int id, string name) {
+    for (auto &client : clients) {
+        if (client.id == id) {
+            client.name = name;
+        }
+    }
+    }
