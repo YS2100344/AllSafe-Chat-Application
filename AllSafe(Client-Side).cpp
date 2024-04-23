@@ -228,3 +228,25 @@ void send_message(int client_socket) {
         }
     }
 }
+
+
+// Receive and decrypt messages from the server
+void recv_message(int client_socket) {
+    while (!exit_flag) {
+        char buffer[MAX_LEN] = {0};
+        int bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
+        if (bytes_received <= 0) {
+            cout << "Failed to receive message or connection closed." << endl;
+            exit_flag = true;  // Set flag to exit receiving loop
+            break;
+        }
+
+        buffer[bytes_received] = '\0';  // Null-terminate the received data
+        
+        // Decrypt the message after receiving
+        string decrypted_message = vigenere_decrypt(string(buffer), globalKey);
+        
+        // Display the decrypted message with sender's username
+        cout << colors[1] << decrypted_message << def_col << endl;
+    }
+}
