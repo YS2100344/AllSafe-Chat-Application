@@ -140,3 +140,26 @@ int main() {
 
     return 0;
 }
+
+// Signal handler for CTRL+C
+void catch_ctrl_c(int signal) {
+    cout << "Caught signal " << signal << ", exiting." << endl;
+    exit_flag = true;
+    
+    // Ensure threads are joinable before joining
+    if (t_send.joinable()) t_send.join();
+    if (t_recv.joinable()) t_recv.join();
+    
+    // Close the socket if it's open
+    if (client_socket > 0) {
+        close(client_socket);
+    }
+
+    exit(0);  // Exit cleanly
+}
+
+// Function to apply color codes to console text
+string color(int code) {
+    static const string colors[] = {"\033[31m", "\033[32m", "\033[33m", "\033[34m", "\033[35m", "\033[36m"};
+    return colors[code % NUM_COLORS];  // Cycle through colors based on code
+}
