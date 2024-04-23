@@ -150,3 +150,30 @@ void set_name(int id, string name) {
         }
     }
     }
+
+bool verify_credentials(const string& receivedEncryptedCredentials) {
+    ifstream file("users.txt");
+    if (!file.is_open()) {
+        cerr << "Failed to open users.txt" << endl;
+        return false;
+    }
+
+    string line;
+    bool loginSuccessful = false;
+    while (getline(file, line)) { // Read each line of the file
+
+            // Compares Each line in the users.txt with the credentials the user entered
+            if (line == receivedEncryptedCredentials) {
+                loginSuccessful = true;
+                cout << "loginSuccessful" << endl;
+                break; // Exit the loop if credentials match
+            }else{
+                // cout << "No login found" << endl;
+            }
+
+    }
+
+    file.close(); // Close the file after reading
+    return loginSuccessful; // Return whether the login was successful
+}
+
