@@ -55,3 +55,66 @@ bool verify_credentials(const string &username, const string &password);
 void save_user_credentials(const string &username, const string &password);
 string trimAndLower(const string &str);
 
+
+int main() {
+    signal(SIGINT, shutdown_server);
+
+    server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (server_socket == -1) {
+        cerr << "Socket creation failed: " << strerror(errno) << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    sockaddr_in server_addr = {};
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(PORT);
+    server_addr.sin_addr.s_addr = INADDR_ANY;
+
+    if (bind(server_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1) {
+        cerr << "Bind error: " << strerror(errno) << endl;
+        close(server_socket);
+        exit(EXIT_FAILURE);
+    }
+
+    if (listen(server_socket, 10) == -1) {
+        cerr << "Listen error: " << strerror(errno) << endl;
+        close(server_socket);
+        exit(EXIT_FAILURE);
+    }
+
+    cout << "Server listening on port " << PORT << endl;
+
+    cout << "\033[1;35m" << "\n\t*** Welcome to AllSafe-Server ***" << "\033[0m" << endl;
+        // Main server loop to accept clients
+
+    while (true) {
+        sockaddr_in client_addr;
+        socklen_t client_len = sizeof(client_addr);
+        int client_socket = accept(server_socket, (struct sockaddr *)&client_addr, &client_len);
+        if (client_socket == -1) {
+            if (errno == EINTR) {
+                break; // Interrupted by signal, begin cleanup process
+            }
+            cerr << "Accept error: " << strerror(errno) << endl;
+            continue;
+        }
+
+        bool found = false;
+        for (int i = 0; i < MAX_CLIENTS; ++i) {
+            if (!clients[i].isActive) {
+                lock_guard<mutex> guard(clients_mtx);
+                clients[i] = {client_socket, "Anonymous", thread(handle_client, client_socket), true};
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            cerr << "Server full: Cannot accept more clients." << endl;
+            close(client_socket);
+        }
+    }
+
+    shutdown_server(SIGINT);
+    return 0;
+}
