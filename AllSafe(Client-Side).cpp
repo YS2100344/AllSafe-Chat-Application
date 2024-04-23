@@ -163,3 +163,16 @@ string color(int code) {
     static const string colors[] = {"\033[31m", "\033[32m", "\033[33m", "\033[34m", "\033[35m", "\033[36m"};
     return colors[code % NUM_COLORS];  // Cycle through colors based on code
 }
+
+// Save encrypted user credentials to a file
+void save_credentials(const string& username, const string& password) {
+    ofstream file("users.txt", ios::app);
+    if (file.is_open()) {
+        string encryptedUsername = vigenere_encrypt(username, globalKey);
+        string encryptedPassword = vigenere_encrypt(password, globalKey);
+        file << encryptedUsername << "|" << encryptedPassword << "\n";
+        file.close();
+    } else {
+        cerr << "Unable to open file for writing credentials." << endl;
+    }
+}
