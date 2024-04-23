@@ -1,0 +1,56 @@
+2024-04-23 00:12:12 - Login successful
+2024-04-23 00:32:33 - Shutting down server due to signal: 2
+2024-04-23 00:32:34 - Shutting down server due to signal: 2
+2024-04-23 04:24:01 - Login successful for monko
+2024-04-23 04:24:21 - Client disconnected: monko (ID = 4)
+2024-04-23 04:24:27 - Login failed for monko
+2024-04-23 04:24:54 - Shutting down server due to signal: 2
+2024-04-23 09:45:57 - Login failed for monko
+2024-04-23 09:46:04 - Login successful for monko
+2024-04-23 09:46:50 - Login successful for mezo
+2024-04-23 09:48:01 - Client disconnected: monko (ID = 5)
+2024-04-23 09:48:02 - Shutting down server due to signal: 2
+2024-04-23 10:08:03 - Login failed for maxer
+2024-04-23 10:08:10 - Login successful for maxer
+2024-04-23 10:09:59 - Login successful for monko
+2024-04-23 10:15:54 - Client disconnected: maxer (ID = 5)
+2024-04-23 10:15:55 - Shutting down server due to signal: 2
+2024-04-23 10:15:55 - Shutting down server due to signal: 2
+2024-04-23 10:18:42 - Login successful for stacker
+2024-04-23 10:19:11 - Login successful for monko
+2024-04-23 10:26:43 - Shutting down server due to signal: 2
+2024-04-23 11:03:29 - Login successful for adam
+2024-04-23 11:10:39 - Shutting down server due to signal: 2
+2024-04-23 11:10:39 - Shutting down server due to signal: 2
+2024-04-23 11:24:29 - Login successful for monko
+2024-04-23 11:26:23 - Login successful for adam
+2024-04-23 11:46:31 - Shutting down server due to signal: 2
+2024-04-23 11:46:31 - Shutting down server due to signal: 2
+2024-04-23 11:48:21 - Login successful for scotty
+2024-04-23 11:48:33 - Login successful for monko
+2024-04-23 11:49:53 - Shutting down server due to signal: 2
+2024-04-23 11:49:54 - Shutting down server due to signal: 2
+2024-04-23 11:52:29 - Login successful for testing
+2024-04-23 11:54:58 - Login successful for testing2
+2024-04-23 12:09:08 - Login successful for testing
+2024-04-23 12:16:08 - Shutting down server due to signal: 2
+2024-04-23 12:16:08 - Shutting down server due to signal: 2
+2024-04-23 12:17:28 - Login successful for testing
+2024-04-23 12:20:08 - Login successful for testing2
+2024-04-23 12:29:35 - Login successful for testing
+2024-04-23 12:30:03 - Login successful for testing2
+2024-04-23 12:31:57 - Shutting down server due to signal: 2
+2024-04-23 12:31:58 - Shutting down server due to signal: 2
+2024-04-23 12:35:36 - Login successful for testing
+2024-04-23 12:36:02 - Login successful for testing2
+2024-04-23 13:31:49 - Login successful for testing
+2024-04-23 13:32:17 - Login successful for testing2
+2024-04-23 13:37:20 - Shutting down server due to signal: 2
+2024-04-23 13:40:14 - Login successful for testing
+2024-04-23 13:40:16 - testing: aulrkmc:ao
+2024-04-23 13:40:54 - Shutting down server due to signal: 2
+2024-04-23 13:40:55 - Shutting down server due to signal: 2
+2024-04-23 13:41:11 - Login successful for testing
+2024-04-23 13:41:45 - Shutting down server due to signal: 2
+2024-04-23 13:41:45 - Shutting down server due to signal: 2
+2024-04-23 14:29:01 - Login successful for test0
