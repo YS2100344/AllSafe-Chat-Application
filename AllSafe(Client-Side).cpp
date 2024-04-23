@@ -176,3 +176,19 @@ void save_credentials(const string& username, const string& password) {
         cerr << "Unable to open file for writing credentials." << endl;
     }
 }
+
+// Encrypt text using the Vigenère cipher
+string vigenere_encrypt(const string &text, the string &globalKey) {
+    string result;
+    for (size_t i = 0, j = 0; i < text.length(); ++i) {
+        char c = text[i];
+        if (isalpha(c)) {
+            char base = isupper(c) ? 'A' : 'a';
+            result += (c - base + (globalKey[j % globalKey.length()] - base)) % 26 + base;
+            j++;
+        } else {
+            result += c;  // Non-alphabetic characters are left unchanged
+        }
+    }
+    return result;
+}
