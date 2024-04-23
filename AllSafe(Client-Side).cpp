@@ -192,3 +192,39 @@ string vigenere_encrypt(const string &text, the string &globalKey) {
     }
     return result;
 }
+// Decrypt text using the Vigenère cipher
+string vigenere_decrypt(const string& text, const string& globalKey) {
+    string result;
+    for (size_t i = 0, j = 0; i < text.size(); ++i) {
+        char c = text[i];
+        if (isalpha(c)) {
+            char base = isupper(c) ? 'A' : 'a';
+            result += (c - globalKey[j % globalKey.size()] - base + 26) % 26 + base;
+            j++;
+        } else {
+            result += c;  // Non-alphabetic characters are left unchanged
+        }
+    }
+    return result;
+}
+
+// Send encrypted messages to the server
+void send_message(int client_socket) {
+    while (!exit_flag) {
+        cout << colors[1] << username << " : " << def_col;
+        string str;
+        getline(cin, str);
+        
+        // Encrypt the message before sending
+        string encrypted_str = vigenere_encrypt(str, globalKey);
+        // Send the encrypted message
+        if (send(client_socket, encrypted_str.c_str(), encrypted_str.length(), 0) == -1) {
+            perror("send");
+            exit_flag = true;
+        }
+        
+        if (str == "/disconnect") {
+            exit_flag = true;  // Set flag to exit sending loop
+        }
+    }
+}
