@@ -190,3 +190,199 @@ void save_user_credentials(const string &encryptedUsername, const string &encryp
     file << trimAndLower(encryptedUsername) << " " << trimAndLower(encryptedPassword) << "\n";
     file.close();
 }
+
+// Terminates a client connection
+
+void end_connection(int id) {
+    for (int i = 0; i < MAX_CLIENTS; ++i) {
+        if (clients[i].id == id && clients[i].isActive) {
+            lock_guard<mutex> guard(clients_mtx);
+            if (clients[i].th.joinable()) {
+                clients[i].th.join();
+            }
+            close(clients[i].id);
+            clients[i].isActive = false;
+            log_message("Client disconnected: " + clients[i].name + " (ID = " + to_string(clients[i].id) + ")");
+            break;
+        }
+    }
+}
+// Handles individual client in a separate thread
+
+void handle_client(int client_socket) {
+    const string key = "tkhcyberkey";
+    bool is_authenticated = false;
+    string username;
+
+    char buffer[MAX_LEN];
+    ssize_t bytes_received = read(client_socket, buffer, sizeof(buffer) - 1);
+    if (bytes_received <= 0) {
+        cerr << "Read error or connection closed by peer." << endl;
+        close(client_socket);
+        return;
+    }
+    buffer[bytes_received] = '\0';
+
+    size_t delimiter_pos = string(buffer).find('|');
+    if (delimiter_pos != string::npos) {
+        username = vigenere_decrypt(string(buffer).substr(0, delimiter_pos), key);
+        string password = vigenere_decrypt(string(buffer).substr(delimiter_pos + 1), key);
+
+        string credentials = vigenere_encrypt(username, key) + "|" + vigenere_encrypt(password, key);
+        if (verify_credentials(credentials)) {
+            const char* msg = "Login successful";
+            send(client_socket, msg, strlen(msg), 0);
+            log_message("Login successful for " + username);
+            is_authenticated = true;
+            set_name(client_socket, username);
+
+            string welcome_message = username + " has joined";
+            broadcast_message(welcome_message, client_socket);
+            shared_print(color(client_socket) + welcome_message + def_col, true);
+        } else {
+            const char* msg = "Login failed";
+            send(client_socket, msg, strlen(msg), 0);
+            log_message("Login failed for " + username);
+            close(client_socket);
+            return;
+        }
+    } else {
+        const char* msg = "Login failed: Invalid message format.";
+        send(client_socket, msg, strlen(msg), 0);
+        log_message(msg);
+        close(client_socket);
+        return;
+    }
+
+    while (is_authenticated) {
+        char chat_buffer[MAX_LEN] = {0};
+        ssize_t chat_bytes_received = read(client_socket, chat_buffer, MAX_LEN - 1);
+
+        if (chat_bytes_received <= 0) {
+            shared_print("Connection lost with client " + to_string(client_socket), true);
+            end_connection(client_socket);
+            break;
+        }
+
+        chat_buffer[chat_bytes_received] = '\0';
+        string chat_received_message(chat_buffer);
+        string chat_decrypted_message = vigenere_decrypt(chat_received_message, key);
+
+        if (chat_decrypted_message == "/disconnect") {
+            end_connection(client_socket);
+            break;
+        }
+
+        shared_print(username + ": " + chat_decrypted_message, true);
+        string encrypted_message = vigenere_encrypt(chat_decrypted_message, key);
+        broadcast_message(encrypted_message, client_socket);
+    }
+    close(client_socket);
+}
+
+
+void shutdown_server(int signum) {
+    log_message("Shutting down server due to signal: " + to_string(signum));
+
+    // Close all client connections and cleanup
+    for (int i = 0; i < MAX_CLIENTS; i++) {
+        if (clients[i].isActive) {
+            if (clients[i].th.joinable()) {
+                clients[i].th.join();
+            }
+            close(clients[i].id);
+            clients[i].isActive = false;
+        }
+    }
+
+    // Close server socket if it's valid
+    if (server_socket > 0) {
+        close(server_socket);
+        server_socket = -1;
+    }
+
+    exit(signum);
+}
+
+int create_server_socket(int port) {
+    int s = socket(AF_INET, SOCK_STREAM, 0);
+    if (s < 0) {
+        cerr << "Unable to create socket" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    sockaddr_in addr;
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(port);
+    addr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    if (bind(s, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
+        cerr << "Unable to bind" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    if (listen(s, 1) < 0) {
+        cerr << "Unable to listen" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    return s;
+}
+
+void cleanup() {
+    cout << "Server cleanup started." << endl;
+
+    // Close all client connections
+    for (int i = 0; i < MAX_CLIENTS; i++) {
+        if (clients[i].isActive) {
+            if (clients[i].th.joinable()) {
+                clients[i].th.join();
+            }
+            close(clients[i].id);
+            clients[i].isActive = false;
+        }
+    }
+
+    // Close the server socket if it's valid
+    if (server_socket > 0) {
+        close(server_socket);
+        server_socket = -1;
+    }
+
+    cout << "Server cleanup completed successfully." << endl;
+}
+
+// string generate_key() {
+//     string key = "tkhcyberkey"; // Replace with a secure method to generate a key
+//     return key;
+// }
+
+string vigenere_encrypt(const string &text, const string &key) {
+    string result;
+    for (size_t i = 0, j = 0; i < text.length(); ++i) {
+        char c = text[i];
+        if (isalpha(c)) {
+            char base = isupper(c) ? 'A' : 'a';
+            result += (c - base + (key[j % key.length()] - base)) % 26 + base;
+            j++;
+        } else {
+            result += c;
+        }
+    }
+    return result;
+}
+
+string vigenere_decrypt(const string &text, const string &key) {
+    string result;
+    for (size_t i = 0, j = 0; i < text.length(); ++i) {
+        char c = text[i];
+        if (isalpha(c)) {
+            char base = isupper(c) ? 'A' : 'a';
+            result += (c - base - (key[j % key.length()] - base) + 26) % 26 + base;
+            j++;
+        } else {
+            result += c;
+        }
+    }
+    return result;
+}
