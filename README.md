@@ -1,6 +1,6 @@
 # AllSafe-Chat-Application
 
-Introduction
+*Introduction*
 
 AllSafe is a specialized client-server chat application designed specifically for internal communications within organizations. This application facilitates up to 200 employees to engage securely with IT administrators or other designated personnel in real-time.
 Core functionality of AllSafe is to provide a private and secure platform where organizational communication can occur without the risk of breaking confidentiality or access to unauthorized personnel.
@@ -8,8 +8,8 @@ Developed with a focus on security and scalability, AllSafe incorporates Vigenè
 Application is structured to handle high volumes of simultaneous connections, making it exceptionally suitable for large organizations where continuous and multiple communications are common.
 One of the key features of AllSafe is its ability to seamlessly integrate new clients into ongoing chats without compromising the integrity and privacy of historical communications. This ensures that sensitive information remains protected even as the network of users grows.
 
-=====================================================================================
-Usage Instructions
+====================================================================
+*Usage Instructions*
 To begin using the AllSafe chat application, both IT administrators and employees must follow a series of steps to ensure the application is set up and functioning correctly. Here is a detailed guide:
 1.	Download the Source Code
 •	Navigate to the GitHub repository linked at the end of this report.
