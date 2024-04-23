@@ -118,3 +118,23 @@ int main() {
     shutdown_server(SIGINT);
     return 0;
 }
+
+// Trims whitespace from both ends of a string and converts to lower case
+
+string trimAndLower(const string& str) {
+    auto start = find_if_not(str.begin(), str.end(), ::isspace);
+    auto end = find_if_not(str.rbegin(), str.rend(), ::isspace).base();
+
+    string trimmed(start, end);
+    transform(trimmed.begin(), trimmed.end(), trimmed.begin(), ::tolower);
+    return trimmed;
+}
+
+// Handles signals for server shutdown
+
+void handle_signal(int signal) {
+    cout << "Signal received: " << signal << endl;
+    shutdown_server(signal); // Call the shutdown function
+}
+
+
