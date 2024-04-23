@@ -150,6 +150,7 @@ void set_name(int id, string name) {
         }
     }
     }
+// Verifies user credentials against stored values
 
 bool verify_credentials(const string& receivedEncryptedCredentials) {
     ifstream file("users.txt");
@@ -177,3 +178,15 @@ bool verify_credentials(const string& receivedEncryptedCredentials) {
     return loginSuccessful; // Return whether the login was successful
 }
 
+// Saves encrypted user credentials to a file
+
+void save_user_credentials(const string &encryptedUsername, const string &encryptedPassword) {
+    ofstream file("users.txt", ios::app);
+    if (!file.is_open()) {
+        cerr << "Failed to open users.txt for writing" << endl;
+        return;
+    }
+    // Use trimAndLower  matche the format expected during verification
+    file << trimAndLower(encryptedUsername) << " " << trimAndLower(encryptedPassword) << "\n";
+    file.close();
+}
