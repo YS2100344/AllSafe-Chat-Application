@@ -8,10 +8,12 @@ Developed with a focus on security and scalability, AllSafe incorporates Vigenè
 Application is structured to handle high volumes of simultaneous connections, making it exceptionally suitable for large organizations where continuous and multiple communications are common.
 One of the key features of AllSafe is its ability to seamlessly integrate new clients into ongoing chats without compromising the integrity and privacy of historical communications. This ensures that sensitive information remains protected even as the network of users grows.
 
-==================================================
+========================================================================================================================================================================================================
 
 
 *Usage Instructions*
+
+
 To begin using the AllSafe chat application, both IT administrators and employees must follow a series of steps to ensure the application is set up and functioning correctly. Here is a detailed guide:
 1.	Download the Source Code
 •	Navigate to the GitHub repository linked at the end of this report.
