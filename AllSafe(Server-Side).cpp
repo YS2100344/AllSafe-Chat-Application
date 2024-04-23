@@ -386,3 +386,57 @@ string vigenere_decrypt(const string &text, const string &key) {
     }
     return result;
 }
+// Logs messages to the console and to a file
+
+void log_message(const string &message) {
+    lock_guard<mutex> lock(cout_mtx);
+    auto now = chrono::system_clock::now();
+    time_t now_time = chrono::system_clock::to_time_t(now);
+    struct tm *local_time = localtime(&now_time);
+    stringstream time_stream;
+    time_stream << put_time(local_time, "%Y-%m-%d %H:%M:%S");
+    string formatted_message = time_stream.str() + " - " + message + "\n";
+
+    cout << formatted_message;
+
+    ofstream log_file("server-logs.txt", ios::app);
+    if (log_file.is_open()) {
+        log_file << formatted_message;
+        log_file.close();
+    } else {
+        cerr << "Failed to open server-logs.txt for writing" << endl;
+    }
+}
+// Prints messages to the console with optional end line
+
+void shared_print(const string &str, bool endLine) {
+    lock_guard<mutex> lock(cout_mtx);
+    cout << str;
+    if (endLine) cout << endl;
+}
+
+// Broadcasts messages to all clients except the sender
+
+int broadcast_message(const string &message, int sender_id) {
+    string sender_name;
+    for (auto &client : clients) {
+        if (client.id == sender_id) {
+            sender_name = client.name;
+            break;
+        }
+    }
+
+    string formatted_message = sender_name + " : " + message;
+    // shared_print("Vigenere-Encrypted Message " + formatted_message, true);
+
+    for (auto &client : clients) {
+        if (client.isActive && client.id != sender_id) {
+            int bytes_written = send(client.id, formatted_message.c_str(), formatted_message.size(), 0);
+            if (bytes_written <= 0) {
+                shared_print("Failed to send message to client " + to_string(client.id), true);
+                client.isActive = false;  
+            }
+        }
+    }
+    return 0;
+}
