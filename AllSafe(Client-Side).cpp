@@ -178,7 +178,7 @@ void save_credentials(const string& username, const string& password) {
 }
 
 // Encrypt text using the Vigenère cipher
-string vigenere_encrypt(const string &text, the string &globalKey) {
+string vigenere_encrypt(const string &text, const string &globalKey) {
     string result;
     for (size_t i = 0, j = 0; i < text.length(); ++i) {
         char c = text[i];
@@ -192,6 +192,7 @@ string vigenere_encrypt(const string &text, the string &globalKey) {
     }
     return result;
 }
+
 // Decrypt text using the Vigenère cipher
 string vigenere_decrypt(const string& text, const string& globalKey) {
     string result;
